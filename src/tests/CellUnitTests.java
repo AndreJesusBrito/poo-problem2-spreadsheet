@@ -5,7 +5,7 @@ import static org.junit.Assert.*;
 import org.junit.Test ;
 import java.util.*;
 
-public class CellUnitTest {
+public class CellUnitTests {
   @Test
   public void testGetContent1() {
     CellNumber cn = new CellNumber(2);

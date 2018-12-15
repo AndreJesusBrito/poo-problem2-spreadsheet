@@ -1,4 +1,4 @@
-package tests;
+tests;
 
 import static org.junit.Assert.*;
 
@@ -18,7 +18,7 @@ public class InterpreterUnitTests {
     }
 
     @Test
-    public void testConstructor() {
+    public void testConstructor2() {
         SpreadSheet ss = new SpreadSheet();
         Interpreter interp = new Interpreter(ss);
 
@@ -32,7 +32,7 @@ public class InterpreterUnitTests {
     }
 
     @Test
-    public void testConstructor() {
+    public void testConstructor3() {
         SpreadSheet ss = new SpreadSheet();
         Interpreter interp = new Interpreter(ss);
 
@@ -47,7 +47,7 @@ public class InterpreterUnitTests {
     }
 
     @Test
-    public void testConstructor() {
+    public void testConstructor4() {
         SpreadSheet ss = new SpreadSheet();
         Interpreter interp = new Interpreter(ss);
 
