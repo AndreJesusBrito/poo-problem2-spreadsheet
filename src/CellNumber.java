@@ -1,9 +1,9 @@
 public class CellNumber implements ICellContent {
     private double n;
-    private String numType;
-    public CellNumber(double n, String type) {
+    private boolean isDouble;
+    public CellNumber(double n, boolean isDouble) {
         this.n = n;
-        this.numType = type;
+        this.isDouble = isDouble;
     }
 
     public Object getValue() {
@@ -11,7 +11,7 @@ public class CellNumber implements ICellContent {
     };
 
     public String getContent() {
-        return numType.equals("double") ? Double.toString(n) : Integer.toString((int) n);
+        return isDouble ? Double.toString(n) : Integer.toString((int) n);
     };
 
     public void onDelete() {};

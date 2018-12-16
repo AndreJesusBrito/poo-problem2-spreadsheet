@@ -2,12 +2,11 @@ public class CellPointer implements ICellContent {
     private Cell cellPointer;
     private String pointer;
     
-    public CellPointer(Number n) {
-
+    public CellPointer(String pointer) {
+    	
     }
 
 	public void setNumber(Number newNum) {
-        n = newNum;
     }
 
     public Object getValue() {

@@ -2,10 +2,6 @@ public class Cell {
     private int referenceCount;
     private ICellContent content;
 
-    public Cell(double n) {
-        referenceCount = 0;
-        setContent(new CellNumber(n, "CHANGE HERE"));
-    }
     public Cell(ICellContent content) {
         referenceCount = 0;
         setContent(content);
