@@ -1,5 +1,5 @@
 public interface ICellContent {
-    public double getValue();
+    public Object getValue();
     public String getContent();
     public void onDelete();
 }

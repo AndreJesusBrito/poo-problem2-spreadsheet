@@ -43,33 +43,30 @@ public class Interpreter {
                 }
                 else*/
                 if(cmdParts[1].matches("[A-Z]+\\d+")) { // reference
-                    Cell numCell;
-                    if(spreadsheet.getSs().containsKey(cmdParts[1]))
-
-                    else {
-                        ICellContent num = new CellNumber(0, false);
-                        Cell referencedCell = new Cell(cmdParts[1], num);
+                    if(!spreadsheet.getSs().containsKey(cmdParts[1])) {
+                        createCellWithNumber(cmdParts[1], 0, false);
                     }
-
-                    ICellContent pointer = new CellPointer(spreadsheet.getSs().get(cmdParts[1]));
-                    Cell pointerCell = new Cell(cmdParts[0], pointer);
-                    spreadsheet.setCell(cmdParts[0], pointerCell);
+                    createCellWithPointer(cmdParts[0], cmdParts[1]);
                 }
                 else { // number
                     boolean isDouble = cmdParts[1].matches("\\d*[.]\\d+") ? true : false;
-                    createCellWithNumber();
+                    createCellWithNumber(cmdParts[0], Double.parseDouble(cmdParts[1]), isDouble);
                 }
             }
         }
     }
 
-    private createCellWithNumber() {
-        ICellContent num = new CellNumber(Double.parseDouble(cmdParts[1]), isDouble);
-        Cell c = new Cell(cmdParts[0], num);
-        spreadsheet.setCell(cmdParts[0], c);
+    private void createCellWithNumber(String key, double value, boolean isDouble) {
+        ICellContent num = new CellNumber(value, isDouble);
+        Cell c = new Cell(key, num);
+        spreadsheet.setCell(key, c);
     }
 
-
+    private void createCellWithPointer(String key, String ref) {
+        ICellContent pointer = new CellPointer(spreadsheet.getSs().get(ref));
+        Cell c = new Cell(key, pointer);
+        spreadsheet.setCell(key, c);
+    }
 
     //---------------------------------------------
     // commands
@@ -85,13 +82,17 @@ public class Interpreter {
     }
 
     private void deleteCmd(String ref) {
-        if(ref.matches("([A-Z]+)(\\d+)"))
+        if(ref.matches("([A-Z]+)(\\d+)")) {
             spreadsheet.delCell(ref);
-        else if(ref.matches("\\d"))
+        }
+        else if(ref.matches("\\d")) {
             spreadsheet.delRow(ref);
-        else if(ref.matches("[A-Z]"))
+        }
+        else if(ref.matches("[A-Z]")) {
             spreadsheet.delCol(ref);
-        else
+        }
+        else {
             spreadsheet.getSs().clear();
+        }
     }
 }

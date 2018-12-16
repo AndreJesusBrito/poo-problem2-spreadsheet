@@ -45,7 +45,7 @@ public class Cell {
         nReferences--;
     }
 
-    public double getValue() {
+    public Object getValue() {
         return content.getValue();
     }
 

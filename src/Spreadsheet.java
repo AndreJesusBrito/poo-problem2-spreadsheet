@@ -93,26 +93,23 @@ public class Spreadsheet {
         Iterator<String> iter = ss.keySet().iterator();
         String pattern = "([A-Z]+)(\\d+)";
         String result = "";
-        String rowKey = "";
+        String lastRowKey = "";
         String key = "";
-        boolean syncIter = false;
         if(iter.hasNext()) {
             key = iter.next();
-            rowKey = key.replaceAll(pattern, "$2");
+            lastRowKey = key.replaceAll(pattern, "$2");
+            result += ss.get(key).toString() + " ";
         }
         while(iter.hasNext()) {
-            if(syncIter)
-                key = iter.next();
-            if(rowKey.equals(key.replaceAll(pattern, "$2")))
-            	result += ss.get(key).toString() + " ";
+            key = iter.next();
+            if(lastRowKey.equals(key.replaceAll(pattern, "$2")))
+                result += ss.get(key).toString() + " ";
             else {
-            	result = result.trim();
+                result = result.trim();
                 result += "\n";
                 result += ss.get(key).toString() + " ";
-                rowKey = key.replaceAll(pattern, "$2");
+                lastRowKey = key.replaceAll(pattern, "$2");
             }
-            if(!syncIter)
-                syncIter = true;
         }
         result = result.trim();
         return result;

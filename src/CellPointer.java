@@ -16,7 +16,7 @@ public class CellPointer implements ICellContent {
     }
 
     @Override
-    public double getValue() {
+    public Object getValue() {
         return referencedCell.getValue();
     }
 

@@ -8,8 +8,11 @@ public class CellNumber implements ICellContent {
     }
 
     @Override
-    public double getValue() {
-        return value;
+    public Object getValue() {
+    	if(isDouble)
+    		return value + "";
+    	else
+    		return (int) value + "";
     }
 
     private void setValue(double value) {
@@ -24,9 +27,9 @@ public class CellNumber implements ICellContent {
 		this.isDouble = isDouble;
 	}
 
-    @Override
+	@Override
     public String getContent() {
-        return (isDouble ? value : ((Number) value).intValue()) + "";
+    	return getValue().toString();
     }
 
     @Override
