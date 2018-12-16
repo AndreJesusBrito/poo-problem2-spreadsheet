@@ -1,36 +1,27 @@
-
 public class CellPointer implements ICellContent {
-	private Cell referencedCell;
-	private String content;
-	
-	public CellPointer(Cell referencedCell) {
-		setReferencedCell(referencedCell);
-		referencedCell.incrementRef();
-	}
-	
-	public Cell getReferencedCell() {
-		return referencedCell;
-	}
+    private Cell referencedCell;
 
-	public void setReferencedCell(Cell referencedCell) {
-		this.referencedCell = referencedCell;
-	}
+    public CellPointer(Cell referencedCell) {
+        setReferencedCell(referencedCell);
+        referencedCell.incrementRef();
+    }
 
-	@Override
-	public Number getValue() {
-		return referencedCell.getValue();
-	}
+    public void setReferencedCell(Cell referencedCell) {
+        this.referencedCell = referencedCell;
+    }
 
-	@Override
-	public String getContent() {
-		return content;
-	}
-	
-	public void setContent(String content) {
-		content = getValue().toString();
-	}
+    @Override
+    public String getContent() {
+        return referencedCell.getReference();
+    }
 
-	public void onDelete() {
-		referencedCell.decrementRef();
-	}
+    @Override
+    public double getValue() {
+        return referencedCell.getValue();
+    }
+
+    @Override
+    public void onDelete() {
+        referencedCell.decrementRef();
+    }
 }

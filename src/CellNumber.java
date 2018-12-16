@@ -1,30 +1,34 @@
-
 public class CellNumber implements ICellContent {
-	private Number value;
-	private String content;
-	
-	public CellNumber(Number value) {
-		setValue(value);
-		setContent(value);
-	}
-	
-	@Override
-	public Number getValue() {
-		return value;
-	}
-	
-	private void setValue(Number value) {
-		this.value = value;
+    private double value;
+    private boolean isDouble;
+
+    public CellNumber(double value, boolean isDouble) {
+        setValue(value);
+        setDouble(isDouble);
+    }
+
+    @Override
+    public double getValue() {
+        return value;
+    }
+
+    private void setValue(double value) {
+        this.value = value;
+    }
+
+	public boolean isDouble() {
+		return isDouble;
 	}
 
-	@Override
-	public String getContent() {
-		return content;
-	}
-	
-	private void setContent(Number value) {
-		content = getValue().toString();
+	public void setDouble(boolean isDouble) {
+		this.isDouble = isDouble;
 	}
 
-	public void onDelete() {}
+    @Override
+    public String getContent() {
+        return (isDouble ? value : ((Number) value).intValue()) + "";
+    }
+
+    @Override
+    public void onDelete() {}
 }
