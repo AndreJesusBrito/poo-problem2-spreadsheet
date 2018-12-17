@@ -8,11 +8,11 @@ public class CellNumber implements ICellContent {
     }
 
     @Override
-    public Object getValue() {
+    public Number getValue() {
     	if(isDouble)
-    		return value + "";
+    		return value;
     	else
-    		return (int) value + "";
+    		return (int) value;
     }
 
     private void setValue(double value) {

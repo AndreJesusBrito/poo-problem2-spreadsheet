@@ -16,7 +16,9 @@ public class Spreadsheet {
             String key2Col = key2.replaceAll(pattern, "$1");
             String key2Row = key2.replaceAll(pattern, "$2");
             return key1Row.equals(key2Row)
-                    ? key1Col.compareTo(key2Col)
+                    ? key1Col.length() == key2Col.length()
+                        ? key1Col.compareTo(key2Col)
+                        : key1Col.length() - key2Col.length()
                     : key1Row.compareTo(key2Row);
         }
     };

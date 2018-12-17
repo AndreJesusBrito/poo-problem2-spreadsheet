@@ -19,8 +19,11 @@ public class CellPointer implements ICellContent {
     public Object getValue() {
         return referencedCell.getValue();
     }
+    
+	public boolean isDouble() {
+		return referencedCell.getContent().isDouble();
+	}
 
-    @Override
     public void onDelete() {
         referencedCell.decrementRef();
     }
