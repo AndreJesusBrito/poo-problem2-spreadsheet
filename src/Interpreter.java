@@ -4,7 +4,9 @@ import java.util.Queue;
 public class Interpreter {
     private Spreadsheet spreadsheet;
     private Queue<String> commands = new LinkedList<String>();
-
+    private static String formulas = "=SUM";
+    
+    
     public Interpreter(Spreadsheet spreadsheet) {
         setSs(spreadsheet);
     }
@@ -37,18 +39,15 @@ public class Interpreter {
             if(cmdParts.length == 1) {
                 printCellCmd(cmdParts[0]);
             } else {
-                /*if(formula) {
+                if(cmdParts[1].matches(formulas)) {
                     // send help!
                     // spreadsheet.setCell(cmdParts[0], cmdParts);
-                }
-                else*/
-                if(cmdParts[1].matches("[A-Z]+\\d+")) { // reference
+                } else if(cmdParts[1].matches("[A-Z]+\\d+")) { // reference
                     if(!spreadsheet.containsKey(cmdParts[1])) {
                         createCellWithNumber(cmdParts[1], 0, false);
                     }
                     createCellWithPointer(cmdParts[0], cmdParts[1]);
-                }
-                else { // number
+                } else { // number
                     boolean isDouble = cmdParts[1].matches("\\d*[.]\\d+") ? true : false;
                     createCellWithNumber(cmdParts[0], Double.parseDouble(cmdParts[1]), isDouble);
                 }
