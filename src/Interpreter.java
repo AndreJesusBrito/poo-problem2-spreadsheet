@@ -43,7 +43,7 @@ public class Interpreter {
                 }
                 else*/
                 if(cmdParts[1].matches("[A-Z]+\\d+")) { // reference
-                    if(!spreadsheet.getSs().containsKey(cmdParts[1])) {
+                    if(!spreadsheet.containsKey(cmdParts[1])) {
                         createCellWithNumber(cmdParts[1], 0, false);
                     }
                     createCellWithPointer(cmdParts[0], cmdParts[1]);
@@ -63,7 +63,7 @@ public class Interpreter {
     }
 
     private void createCellWithPointer(String key, String ref) {
-        ICellContent pointer = new CellPointer(spreadsheet.getSs().get(ref));
+        ICellContent pointer = new CellPointer(spreadsheet.get(ref));
         Cell c = new Cell(key, pointer);
         spreadsheet.setCell(key, c);
     }
@@ -78,7 +78,7 @@ public class Interpreter {
     }
 
     private void printCellCmd(String ref) {
-        System.out.println(spreadsheet.getSs().get(ref).toString());
+        System.out.println(spreadsheet.get(ref).toString());
     }
 
     private void deleteCmd(String ref) {
@@ -92,7 +92,7 @@ public class Interpreter {
             spreadsheet.delCol(ref);
         }
         else {
-            spreadsheet.getSs().clear();
+            spreadsheet.clear();
         }
     }
 }

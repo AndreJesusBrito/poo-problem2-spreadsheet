@@ -33,6 +33,7 @@ public class CellSum implements ICellContent {
 		return result;
 	}
 
+	@Override
 	public void onDelete() {
 		for(ICellContent arg : args) {
 			arg.onDelete();

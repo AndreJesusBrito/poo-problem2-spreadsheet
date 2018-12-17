@@ -1,13 +1,12 @@
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.Set;
-import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.HashSet;
 
-public class Spreadsheet {
-    private SortedMap<String, Cell> ss;
-    private Comparator<String> comparator = new Comparator<String>() {
+public class Spreadsheet extends TreeMap<String, Cell> {
+	private static final long serialVersionUID = 6622418703791895248L;
+    private static Comparator<String> comparator = new Comparator<String>() {
         @Override
         public int compare(String key1, String key2) {
             String pattern = "([A-Z]+)(\\d+)";
@@ -19,45 +18,39 @@ public class Spreadsheet {
                     ? key1Col.length() == key2Col.length()
                         ? key1Col.compareTo(key2Col)
                         : key1Col.length() - key2Col.length()
-                    : key1Row.compareTo(key2Row);
+                    : key1Row.length() == key2Row.length()
+                        ? key1Row.compareTo(key2Row)
+                        : key1Row.length() - key2Row.length();
         }
     };
 
     public Spreadsheet() {
-        ss = new TreeMap<String, Cell>(comparator);
-    }
-
-    public SortedMap<String, Cell> getSs() {
-        return ss;
-    }
-
-    public void setSs(SortedMap<String, Cell> ss) {
-        this.ss = ss;
+        super(comparator);
     }
 
     public void setCell(String key, Cell c) {
-        if(ss.containsKey(key)) {
+        if(containsKey(key)) {
             changeCellContent(key, c.getContent());
         } else {
-            ss.put(key, c);
+            put(key, c);
         }
     }
 
     public void changeCellContent(String key, ICellContent content) {
-        ss.get(key).setContent(content);
+        get(key).setContent(content);
     }
 
     public void delCell(String key) {
-        ss.get(key).onDelete();
-        if(ss.get(key).isReferenced())
+        get(key).onDelete();
+        if(get(key).isReferenced())
             changeCellContent(key, new CellNumber(0.0, false));
         else
-            ss.remove(key);
+            remove(key);
     }
 
     public Set<String> getRow(String rowKey) {
         Set<String> row = new HashSet<String>();
-        Iterator<String> iter = ss.keySet().iterator();
+        Iterator<String> iter = keySet().iterator();
         String pattern = "[A-Z]+" + rowKey;
         while(iter.hasNext()) {
             String key = iter.next();
@@ -69,7 +62,7 @@ public class Spreadsheet {
 
     public Set<String> getCol(String colKey) {
         Set<String> col = new HashSet<String>();
-        Iterator<String> iter = ss.keySet().iterator();
+        Iterator<String> iter = keySet().iterator();
         String pattern = colKey + "\\d+";
         while(iter.hasNext()) {
             String key = iter.next();
@@ -82,17 +75,17 @@ public class Spreadsheet {
     public void delRow(String rowKey) {
         Iterator<String> iter = getRow(rowKey).iterator();
         while(iter.hasNext())
-            ss.remove(iter.next());
+            remove(iter.next());
     }
 
     public void delCol(String colKey) {
         Iterator<String> iter = getCol(colKey).iterator();
         while(iter.hasNext())
-            ss.remove(iter.next());
+            remove(iter.next());
     }
 
     public String toString() {
-        Iterator<String> iter = ss.keySet().iterator();
+        Iterator<String> iter = keySet().iterator();
         String pattern = "([A-Z]+)(\\d+)";
         String result = "";
         String lastRowKey = "";
@@ -100,16 +93,16 @@ public class Spreadsheet {
         if(iter.hasNext()) {
             key = iter.next();
             lastRowKey = key.replaceAll(pattern, "$2");
-            result += ss.get(key).toString() + " ";
+            result += get(key).toString() + " ";
         }
         while(iter.hasNext()) {
             key = iter.next();
             if(lastRowKey.equals(key.replaceAll(pattern, "$2")))
-                result += ss.get(key).toString() + " ";
+                result += get(key).toString() + " ";
             else {
                 result = result.trim();
                 result += "\n";
-                result += ss.get(key).toString() + " ";
+                result += get(key).toString() + " ";
                 lastRowKey = key.replaceAll(pattern, "$2");
             }
         }
