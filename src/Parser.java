@@ -1,115 +1,67 @@
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 public class Parser {
     Spreadsheet spreadsheet;
-	String[] strParts;
-	int pos;
-	Token currentToken;
+	List<Token> tokens;
 	
-	public Parser(Spreadsheet spreadsheed, String[] strParts) {
-		setStrParts(strParts);
-		setPos(0);
-		setCurrentToken(null);
+	public Parser(Spreadsheet spreadsheet, String[] strParts) throws UnsupportedTokenTypeException {
+		parseTokens(strParts);
+		this.spreadsheet = spreadsheet;
 	}
 	
-	public Parser(Spreadsheet spreadsheet, String strLine) {
+	public Parser(Spreadsheet spreadsheet, String strLine) throws UnsupportedTokenTypeException {
 		this(spreadsheet, strLine.split("\\s+"));
 	}
-	
-	public String[] getStrParts() {
-        return strParts;
-    }
 
-    public void setStrParts(String[] strParts) {
-        this.strParts = strParts;
-    }
-
-    public int getPos() {
-        return pos;
-    }
-
-    public void setPos(int pos) {
-        this.pos = pos;
-    }
-    
-    public Token getCurrentToken() {
-        return currentToken;
-    }
-
-    public void setCurrentToken(Token currentToken) {
-        this.currentToken = currentToken;
-    }
-
-    public Token getNextToken() throws UnsupportedTokenTypeException {
-	    Token currentToken = null;
-	    if(pos > strParts.length - 1)
-	        currentToken = new Token("EOF", null);
-	    else if(strParts[pos].equals("=SUM")) {
-			currentToken = new Token("SUM", strParts[pos]);
-			pos++;
-		}
-		else if(strParts[pos].equals("([A-Z]+)(\\d+)")) {
-			currentToken = new Token("CELL_REFERENCE", strParts[pos]);
-			pos++;
-		}
-		else if(strParts[pos].equals("(A-Z)+")) {
-		    currentToken = new Token("STRING", strParts[pos]);
-		    pos++;
-		}
-		else if(strParts[pos].equals("\\d+")) {
-		    currentToken = new Token("INTEGER", strParts[pos]);
-		    pos++;
-		}
-		else if(strParts[pos].equals("\\d+[.]\\d+")) {
-		    currentToken = new Token("DOUBLE", strParts[pos]);
-		    pos++;
-		}
-		else
-		    throw new UnsupportedTokenTypeException();
-		return currentToken;	
-    }
-    
-    public List<ICellContent> findArgs() throws UnsupportedTokenTypeException {
-        List<ICellContent> result = new ArrayList<ICellContent>();
-        setCurrentToken(getNextToken());
-        if(currentToken.getType().equals("CELL_REFERENCE")) {
-            result.add(new CellPointer(spreadsheet.get(currentToken.getValue())));
-            result.addAll(findArgs());
+    public void parseTokens(String[] strParts) throws UnsupportedTokenTypeException {
+        int pos = 0;
+        tokens = new ArrayList<Token>();
+        while(pos < strParts.length) {
+    	    if(strParts[pos].equals("=SUM")) {
+    	        tokens.add(new Token("SUM", strParts[pos]));
+    		}
+    		else if(strParts[pos].matches("([A-Z]+)(\\d+)")) {
+    		    tokens.add(new Token("CELL_REFERENCE", strParts[pos]));
+    		}
+    		else if(strParts[pos].matches("[A-Z]+")) {
+    		    tokens.add(new Token("STRING", strParts[pos]));
+    		}
+    		else if(strParts[pos].matches("\\d+")) {
+    		    tokens.add(new Token("INTEGER", strParts[pos]));
+    		}
+    		else if(strParts[pos].matches("\\d+[.]\\d+")) {
+    		    tokens.add(new Token("DOUBLE", strParts[pos]));
+    		}
+    		else
+    		    throw new UnsupportedTokenTypeException();
+    	    pos++;
         }
-        else if(currentToken.getType().equals("STRING")) {
-            Set<String> keySet = spreadsheet.getCol(currentToken.getType());
-            for(String key : keySet) {
-//                resultList.add(spreadsheet.get(key));
-            }
-        }
-        else if(currentToken.getType().equals("INTEGER")) {
-
-        }
-        else if(currentToken.getType().equals("DOUBLE")) {
-            result.add(new CellNumber(Double.parseDouble(currentToken.getValue()), true));
-            result.addAll(findArgs());
-        }
-        else if(currentToken.getType().equals("SUM")) {
-            result.add(new CellSum(findArgs().toArray(new ICellContent[0])));
-        }
-        return result;
     }
 	
-	public ICellContent expr() throws UnsupportedTokenTypeException {
-	    ICellContent result = null;
-	    if(currentToken.getType().equals("CELL_REFERENCE")) {
-	        result = new CellPointer(spreadsheet.get(currentToken.getValue()));
+	public Object expr(int pos) {
+	    Object result = null;
+	    if(tokens.get(pos).getType().equals("CELL_REFERENCE")) {
+	        result = new CellPointer(spreadsheet.get(tokens.get(pos).getValue()));
 	    }
-	    else if(currentToken.getType().equals("INTEGER")) {
-	        result = new CellNumber(Integer.parseInt(currentToken.getValue()), false);
+	    else if(tokens.get(pos).getType().equals("INTEGER")) {
+	        result = new CellNumber(Integer.parseInt(tokens.get(pos).getValue()), false);
 	    }
-	    else if(currentToken.getType().equals("DOUBLE")) {
-	        result = new CellNumber(Double.parseDouble(currentToken.getValue()), true);
+	    else if(tokens.get(pos).getType().equals("DOUBLE")) {
+	        result = new CellNumber(Double.parseDouble(tokens.get(pos).getValue()), true);
 	    }
-	    else if(currentToken.getType().equals("SUM")) {
-	        result = new CellSum(findArgs().toArray(new ICellContent[0]));
+	    else if(tokens.get(pos).getType().equals("SUM")) {
+	        if(tokens.get(pos+1).getType().equals("CELL_REFERENCE") || 
+	           tokens.get(pos+1).getType().equals("DOUBLE") ||
+	           tokens.get(pos+1).getType().equals("SUM")) {
+	            ICellContent arg1 = (ICellContent) expr(pos+1);
+	            ICellContent arg2 = (ICellContent) expr(pos+2);
+                result = new CellSumBinary(arg1, arg2);
+                tokens.remove(pos+1); tokens.remove(pos+1);
+	        }
+	        else if(tokens.get(pos+1).getType().equals("STRING")) {
+	            result = tokens.get(pos+1).getValue();
+	        }
 	    }
 	    return result;
 	}
