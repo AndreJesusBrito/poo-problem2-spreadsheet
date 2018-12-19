@@ -44,6 +44,9 @@ public class Parser {
 	    if(tokens.get(pos).getType().equals("CELL_REFERENCE")) {
 	        result = new CellPointer(spreadsheet.get(tokens.get(pos).getValue()));
 	    }
+	    else if(tokens.get(pos).getType().equals("STRING")) {
+	        result = new String(tokens.get(pos).getValue());
+	    }
 	    else if(tokens.get(pos).getType().equals("INTEGER")) {
 	        result = new CellNumber(Integer.parseInt(tokens.get(pos).getValue()), false);
 	    }
@@ -60,7 +63,12 @@ public class Parser {
                 tokens.remove(pos+1); tokens.remove(pos+1);
 	        }
 	        else if(tokens.get(pos+1).getType().equals("STRING")) {
-	            result = tokens.get(pos+1).getValue();
+	            String line = (String) expr(pos+1);
+	            result = new CellSumUnary(spreadsheet, line);
+	            tokens.remove(pos+1);
+	        }
+	        else if(tokens.get(pos+1).getType().equals("INTEGER")) {
+	            
 	        }
 	    }
 	    return result;

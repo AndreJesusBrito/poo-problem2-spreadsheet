@@ -4,9 +4,9 @@ public class CellSumUnary implements ICellContent {
     private String line;
     private Spreadsheet spreadsheet;
     
-    public CellSumUnary(String line, Spreadsheet spreadsheet) {
-        setLine(line);
+    public CellSumUnary(Spreadsheet spreadsheet, String line) {
         setSpreadsheet(spreadsheet);
+        setLine(line);
     }
     
     public String getLine() {
@@ -44,17 +44,7 @@ public class CellSumUnary implements ICellContent {
 
     @Override
     public String getContent() {
-        String content = "=SUM ";
-        Set<String> keySet;
-        if(line.matches("\\d+"))
-            keySet = spreadsheet.getRow(line);
-        else
-            keySet = spreadsheet.getCol(line);
-        for(String key : keySet) {
-            content += spreadsheet.get(key).getContent().getContent() + " ";
-        }
-        content = content.trim();
-        return content;
+        return "=SUM " + line;
     }
 
     @Override
