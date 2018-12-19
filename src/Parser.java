@@ -41,6 +41,9 @@ public class Parser {
 	
     private int countSums(int pos) {
         int result = 1;
+        if(pos < 0) {
+            return result;
+        }
         while(tokens.get(pos).getType().equals("SUM") 
                 && tokens.get(pos+1).getType().equals("SUM") 
                 && pos < tokens.size()) {
@@ -89,7 +92,8 @@ public class Parser {
 	        }
 	        else if(tokens.get(pos+1).getType().equals("INTEGER")) {
 	            int countSums = countSums(pos-1);
-	            int countArgs = countArgs(pos-1+countSums);
+	            int countArgs = countArgs(pos+countSums);
+	            //System.out.println("countSums = " + countSums + " " + "countArgs = " + countArgs);
 	            if(countSums < countArgs) {
 	                ICellContent arg1 = (ICellContent) expr(pos+1);
 	                ICellContent arg2 = (ICellContent) expr(pos+2);

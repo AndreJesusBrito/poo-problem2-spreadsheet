@@ -75,13 +75,13 @@ public class Spreadsheet extends TreeMap<String, Cell> {
     public void delRow(String rowKey) {
         Iterator<String> iter = getRow(rowKey).iterator();
         while(iter.hasNext())
-            remove(iter.next());
+            delCell(iter.next());
     }
 
     public void delCol(String colKey) {
         Iterator<String> iter = getCol(colKey).iterator();
         while(iter.hasNext())
-            remove(iter.next());
+            delCell(iter.next());
     }
 
     public String toString() {
