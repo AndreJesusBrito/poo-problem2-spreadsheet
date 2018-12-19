@@ -7,7 +7,7 @@ public class CellSum implements ICellContent {
 		setArgs(args);
 		boolean isDouble = true;
 		for(ICellContent arg : args) {
-			isDouble = isDouble | arg.isDouble();
+			isDouble = isDouble || arg.isDouble();
 		}
 		setDouble(isDouble);
 	}
