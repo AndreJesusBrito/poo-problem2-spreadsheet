@@ -39,6 +39,26 @@ public class Parser {
         }
     }
 	
+    private int countSums(int pos) {
+        int result = 1;
+        while(tokens.get(pos).getType().equals("SUM") 
+                && tokens.get(pos+1).getType().equals("SUM") 
+                && pos < tokens.size()) {
+            result++;
+            pos++;
+        }
+        return result;
+    }
+    
+    private int countArgs(int pos) {
+        int result = 0;
+        while(pos < tokens.size()) {
+            result++;
+            pos++;
+        }
+        return result;
+    }
+    
 	public Object expr(int pos) {
 	    Object result = null;
 	    if(tokens.get(pos).getType().equals("CELL_REFERENCE")) {
@@ -68,7 +88,19 @@ public class Parser {
 	            tokens.remove(pos+1);
 	        }
 	        else if(tokens.get(pos+1).getType().equals("INTEGER")) {
-	            
+	            int countSums = countSums(pos-1);
+	            int countArgs = countArgs(pos-1+countSums);
+	            if(countSums < countArgs) {
+	                ICellContent arg1 = (ICellContent) expr(pos+1);
+	                ICellContent arg2 = (ICellContent) expr(pos+2);
+	                result = new CellSumBinary(arg1, arg2);
+	                tokens.remove(pos+1); tokens.remove(pos+1);
+	            }
+	            else {
+	                String line = ((Integer) ((ICellContent) expr(pos+1)).getValue()).toString();
+	                result = new CellSumUnary(spreadsheet, line);
+	                tokens.remove(pos+1);
+	            }
 	        }
 	    }
 	    return result;

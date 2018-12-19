@@ -7,7 +7,7 @@ public class CellSumBinary implements ICellContent {
 	public CellSumBinary(ICellContent arg1, ICellContent arg2) {
 		setArg1(arg1);
 		setArg2(arg2);
-		setDouble(arg1.isDouble() || arg1.isDouble());
+		setDouble(arg1.isDouble() || arg2.isDouble());
 	}
 	
 	public ICellContent getArg1() {
@@ -28,7 +28,7 @@ public class CellSumBinary implements ICellContent {
 
     @Override
 	public Number getValue() {
-		double value = (Double) arg1.getValue() + (Double) arg2.getValue();
+		double value = ((Number) arg1.getValue()).doubleValue() + ((Number) arg2.getValue()).doubleValue();
     	if(isDouble)
     		return value;
     	else

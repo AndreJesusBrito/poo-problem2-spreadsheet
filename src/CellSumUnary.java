@@ -34,7 +34,7 @@ public class CellSumUnary implements ICellContent {
         else
             keySet = spreadsheet.getCol(line);
         for(String key : keySet) {
-            value += (Double) spreadsheet.get(key).getValue();
+            value += (double) spreadsheet.get(key).getValue();
         }
         if(isDouble())
             return value;
