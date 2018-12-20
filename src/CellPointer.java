@@ -5,6 +5,10 @@ public class CellPointer implements ICellContent {
         setReferencedCell(referencedCell);
         referencedCell.incrementRef();
     }
+    
+    public Cell getReferencedCell() {
+        return referencedCell;
+    }
 
     public void setReferencedCell(Cell referencedCell) {
         this.referencedCell = referencedCell;

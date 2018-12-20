@@ -55,6 +55,6 @@ public class Cell {
 
     @Override
     public String toString() {
-        return reference + " " + content.getContent() + " " + content.getValue();
+        return reference + " " + content.getContent() + " " + getValue();
     }
 }

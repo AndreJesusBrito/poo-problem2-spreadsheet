@@ -74,14 +74,36 @@ public class Spreadsheet extends TreeMap<String, Cell> {
 
     public void delRow(String rowKey) {
         Iterator<String> iter = getRow(rowKey).iterator();
-        while(iter.hasNext())
-            delCell(iter.next());
+        Set<String> keysToDelete = new HashSet<String>();
+        while(iter.hasNext()) {
+            String key = iter.next();
+            if(get(key).getContent() instanceof CellPointer) {
+                keysToDelete.add(((CellPointer) get(key).getContent()).getReferencedCell().getReference());
+            }
+            delCell(key);
+        }
+        //weird bug, not all keys showing
+        for(String key : keysToDelete) {
+            System.out.println(get(key).getValue());
+        }
+        for(String key : keysToDelete) {
+            delCell(key);
+        }
     }
 
     public void delCol(String colKey) {
         Iterator<String> iter = getCol(colKey).iterator();
-        while(iter.hasNext())
-            delCell(iter.next());
+        Set<String> keysToDelete = new HashSet<String>();
+        while(iter.hasNext()) {
+            String key = iter.next();
+            if(get(key).getContent() instanceof CellPointer) {
+                keysToDelete.add(((CellPointer) get(key).getContent()).getReferencedCell().getReference());
+            }
+            delCell(key);
+        }
+        for(String key : keysToDelete) {
+            delCell(key);
+        }
     }
 
     public String toString() {

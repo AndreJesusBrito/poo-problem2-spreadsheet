@@ -62,6 +62,28 @@ public class Parser {
         return result;
     }
     
+    private boolean isUnary(int pos) { //not working for every case, FIXME
+        try {
+            if(tokens.get(pos-1).getType().equals("SUM")) {
+                try {
+                    tokens.get(pos+3);
+                    return false;
+                } catch(IndexOutOfBoundsException e) {
+                    return true;
+                }
+            }
+            else
+                try {
+                    tokens.get(pos+2);
+                    return false;
+                } catch(IndexOutOfBoundsException e) {
+                    return true;
+                }
+        } catch(IndexOutOfBoundsException e) {
+            return true;
+        }
+    }
+    
 	public Object expr(int pos) {
 	    Object result = null;
 	    if(tokens.get(pos).getType().equals("CELL_REFERENCE")) {
@@ -91,10 +113,7 @@ public class Parser {
 	            tokens.remove(pos+1);
 	        }
 	        else if(tokens.get(pos+1).getType().equals("INTEGER")) {
-	            int countSums = countSums(pos-1);
-	            int countArgs = countArgs(pos+countSums);
-	            //System.out.println("countSums = " + countSums + " " + "countArgs = " + countArgs);
-	            if(countSums < countArgs) {
+	            if(!isUnary(pos)) {
 	                ICellContent arg1 = (ICellContent) expr(pos+1);
 	                ICellContent arg2 = (ICellContent) expr(pos+2);
 	                result = new CellSumBinary(arg1, arg2);

@@ -67,10 +67,10 @@ public class Interpreter {
         if(ref.matches("([A-Z]+)(\\d+)")) {
             spreadsheet.delCell(ref);
         }
-        else if(ref.matches("\\d")) {
+        else if(ref.matches("\\d+")) {
             spreadsheet.delRow(ref);
         }
-        else if(ref.matches("[A-Z]")) {
+        else if(ref.matches("[A-Z]+")) {
             spreadsheet.delCol(ref);
         }
         else {
