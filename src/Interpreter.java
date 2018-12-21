@@ -5,7 +5,8 @@ import java.util.Queue;
 public class Interpreter {
     private Spreadsheet spreadsheet;
     private Queue<String> commands = new LinkedList<String>();
-    
+    private String output = "";
+
     public Interpreter(Spreadsheet spreadsheet) {
         setSs(spreadsheet);
     }
@@ -16,6 +17,10 @@ public class Interpreter {
 
     public void setSs(Spreadsheet spreadsheet) {
         this.spreadsheet = spreadsheet;
+    }
+
+    public String getOutput() {
+        return output;
     }
 
     public void readInput(String cmd) {
@@ -43,7 +48,7 @@ public class Interpreter {
                     Parser parser = new Parser(spreadsheet, test);
                     Cell c = new Cell(cmdParts[0], (ICellContent) parser.expr(0));
                     spreadsheet.setCell(cmdParts[0], c);
-                } catch (UnsupportedTokenTypeException e) {
+                } catch(UnsupportedTokenTypeException e) {
                     e.printStackTrace();
                 }
             }
@@ -56,11 +61,15 @@ public class Interpreter {
 
 
     private void printSsCmd() {
-        System.out.println(spreadsheet.toString());
+        String out = spreadsheet.toString();
+        output += out;
+        System.out.println(out);
     }
 
     private void printCellCmd(String ref) {
-        System.out.println(spreadsheet.get(ref).toString());
+        String out = spreadsheet.get(ref).toString();
+        output += out;
+        System.out.println(out);
     }
 
     private void deleteCmd(String ref) {
