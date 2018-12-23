@@ -29,6 +29,6 @@ public class CellPointer implements ICellContent {
     }
 
     public void onDelete() {
-        referencedCell.decrementRef();
+        if(referencedCell != null) referencedCell.decrementRef();
     }
 }

@@ -42,26 +42,20 @@ public class Spreadsheet extends TreeMap<String, Cell> {
     
     public void setCell(String key, Cell c) {
         if(containsKey(key)) {
-            changeCellContent(key, c.getContent());
+        	get(key).setContent(c.getContent());
         } else {
             put(key, c);
         }
     }
 
-   
-    public void changeCellContent(String key, ICellContent content) {
-    	Cell cell = get(key);
-    	cell.getContent().onDelete();
-        cell.setContent(content);
-    }
-
     public void delCell(String key) {
         Cell cell = get(key);
-        cell.onDelete();
-        if(cell.isReferenced())
-            changeCellContent(key, new CellNumber(0.0, false));
-        else
-            remove(key);
+        if(cell.isReferenced()) {
+        	 get(key).setContent(new CellNumber(0.0, false));
+        } else {
+        	cell.onDelete();
+        	remove(key);
+        }
     }
 
     public Set<String> getRow(String rowKey) {
