@@ -5,7 +5,7 @@ import java.util.TreeMap;
 import java.util.HashSet;
 
 public class Spreadsheet extends TreeMap<String, Cell> {
-	private static final long serialVersionUID = 6622418703791895248L;
+    private static final long serialVersionUID = 6622418703791895248L;
     private static Comparator<String> comparator = new Comparator<String>() {
         @Override
         public int compare(String key1, String key2) {
@@ -28,6 +28,18 @@ public class Spreadsheet extends TreeMap<String, Cell> {
         super(comparator);
     }
 
+    public void initCell(String key) {
+    	setCell(key, new Cell(key, new CellNumber(0, false)));
+    }
+    
+    @Override
+    public Cell get(Object key) {
+		if(!this.containsKey(key)) {
+			initCell((String) key);
+		}
+		return super.get(key);
+    }
+    
     public void setCell(String key, Cell c) {
         if(containsKey(key)) {
             changeCellContent(key, c.getContent());
@@ -36,13 +48,17 @@ public class Spreadsheet extends TreeMap<String, Cell> {
         }
     }
 
+   
     public void changeCellContent(String key, ICellContent content) {
-        get(key).setContent(content);
+    	Cell cell = get(key);
+    	cell.getContent().onDelete();
+        cell.setContent(content);
     }
 
     public void delCell(String key) {
-        get(key).onDelete();
-        if(get(key).isReferenced())
+        Cell cell = get(key);
+        cell.onDelete();
+        if(cell.isReferenced())
             changeCellContent(key, new CellNumber(0.0, false));
         else
             remove(key);
@@ -74,35 +90,23 @@ public class Spreadsheet extends TreeMap<String, Cell> {
 
     public void delRow(String rowKey) {
         Iterator<String> iter = getRow(rowKey).iterator();
-        Set<String> keysToDelete = new HashSet<String>();
         while(iter.hasNext()) {
-            String key = iter.next();
-            if(get(key).getContent() instanceof CellPointer) {
-                keysToDelete.add(((CellPointer) get(key).getContent()).getReferencedCell().getReference());
-            }
-            delCell(key);
+            delCell(iter.next());
         }
-        //weird bug, not all keys showing
-        for(String key : keysToDelete) {
-            System.out.println(get(key).getValue());
-        }
-        for(String key : keysToDelete) {
-            delCell(key);
+        Iterator<String> iter2 = getRow(rowKey).iterator();
+        while(iter2.hasNext()) {
+            delCell(iter2.next());
         }
     }
 
     public void delCol(String colKey) {
         Iterator<String> iter = getCol(colKey).iterator();
-        Set<String> keysToDelete = new HashSet<String>();
         while(iter.hasNext()) {
-            String key = iter.next();
-            if(get(key).getContent() instanceof CellPointer) {
-                keysToDelete.add(((CellPointer) get(key).getContent()).getReferencedCell().getReference());
-            }
-            delCell(key);
+            delCell(iter.next());
         }
-        for(String key : keysToDelete) {
-            delCell(key);
+        Iterator<String> iter2 = getCol(colKey).iterator();
+        while(iter2.hasNext()) {
+            delCell(iter2.next());
         }
     }
 
@@ -128,7 +132,6 @@ public class Spreadsheet extends TreeMap<String, Cell> {
                 lastRowKey = key.replaceAll(pattern, "$2");
             }
         }
-        result = result.trim();
-        return result;
+        return result.trim();
     }
 }

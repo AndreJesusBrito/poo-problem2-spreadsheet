@@ -1,12 +1,12 @@
 public class Cell {
-    private String reference;
+    private String key;
     private int nReferences;
     private ICellContent content;
 
-    public Cell(String reference, ICellContent content) {
-        setReferences(0);
-        setContent(content);
-        setReference(reference);
+    public Cell(String key, ICellContent content) {
+        this.nReferences = 0;
+        this.content = content;
+        this.key = key;
     }
 
     public ICellContent getContent() {
@@ -14,23 +14,16 @@ public class Cell {
     }
 
     public void setContent(ICellContent content) {
-        this.content = content;
+        this.content.onDelete();
+    	this.content = content;
     }
 
     public int getReferences() {
         return nReferences;
     }
 
-    public void setReferences(int nReferences) {
-        this.nReferences = nReferences;
-    }
-
-    public String getReference() {
-        return reference;
-    }
-
-    public void setReference(String reference) {
-        this.reference = reference;
+    public String getKey() {
+        return key;
     }
 
     public boolean isReferenced() {
@@ -55,6 +48,6 @@ public class Cell {
 
     @Override
     public String toString() {
-        return reference + " " + content.getContent() + " " + getValue();
+        return key + " " + content.getContent() + " " + getValue();
     }
 }

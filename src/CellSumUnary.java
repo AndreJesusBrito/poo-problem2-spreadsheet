@@ -67,6 +67,7 @@ public class CellSumUnary implements ICellContent {
             keySet = spreadsheet.getRow(line);
         else
             keySet = spreadsheet.getCol(line);
+
         for(String key : keySet) {
             isDouble = isDouble || spreadsheet.get(key).getContent().isDouble();
         }

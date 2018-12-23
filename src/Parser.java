@@ -38,30 +38,7 @@ public class Parser {
     	    pos++;
         }
     }
-	
-//    private int countSums(int pos) {
-//        int result = 1;
-//        if(pos < 0) {
-//            return result;
-//        }
-//        while(tokens.get(pos).getType().equals("SUM") 
-//                && tokens.get(pos+1).getType().equals("SUM") 
-//                && pos < tokens.size()) {
-//            result++;
-//            pos++;
-//        }
-//        return result;
-//    }
-//    
-//    private int countArgs(int pos) {
-//        int result = 0;
-//        while(pos < tokens.size()) {
-//            result++;
-//            pos++;
-//        }
-//        return result;
-//    }
-    
+
     private boolean isUnaryWithOneSum(int pos) {
         try {
             tokens.get(pos+2);
