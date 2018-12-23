@@ -39,27 +39,37 @@ public class Parser {
         }
     }
 	
-    private int countSums(int pos) {
-        int result = 1;
-        if(pos < 0) {
-            return result;
-        }
-        while(tokens.get(pos).getType().equals("SUM") 
-                && tokens.get(pos+1).getType().equals("SUM") 
-                && pos < tokens.size()) {
-            result++;
-            pos++;
-        }
-        return result;
-    }
+//    private int countSums(int pos) {
+//        int result = 1;
+//        if(pos < 0) {
+//            return result;
+//        }
+//        while(tokens.get(pos).getType().equals("SUM") 
+//                && tokens.get(pos+1).getType().equals("SUM") 
+//                && pos < tokens.size()) {
+//            result++;
+//            pos++;
+//        }
+//        return result;
+//    }
+//    
+//    private int countArgs(int pos) {
+//        int result = 0;
+//        while(pos < tokens.size()) {
+//            result++;
+//            pos++;
+//        }
+//        return result;
+//    }
     
-    private int countArgs(int pos) {
-        int result = 0;
-        while(pos < tokens.size()) {
-            result++;
-            pos++;
+    private boolean isUnaryWithOneSum(int pos) {
+        try {
+            tokens.get(pos+2);
+            return false;
         }
-        return result;
+        catch(Exception e) {
+            return true;
+        }
     }
     
     private boolean isUnary(int pos) { //not working for every case, FIXME
@@ -68,19 +78,21 @@ public class Parser {
                 try {
                     tokens.get(pos+3);
                     return false;
-                } catch(IndexOutOfBoundsException e) {
+                } catch(Exception e1) {
                     return true;
                 }
             }
             else
-                try {
-                    tokens.get(pos+2);
-                    return false;
-                } catch(IndexOutOfBoundsException e) {
-                    return true;
-                }
-        } catch(IndexOutOfBoundsException e) {
-            return true;
+                return isUnaryWithOneSum(pos);
+        } catch(Exception e2) {
+            return isUnaryWithOneSum(pos);
+//            try {
+//                Token test = tokens.get(pos+2);
+//                return false;
+//            }
+//            catch(Exception e2) {
+//                return true;
+//            }
         }
     }
     
@@ -120,7 +132,7 @@ public class Parser {
 	                tokens.remove(pos+1); tokens.remove(pos+1);
 	            }
 	            else {
-	                String line = ((Integer) ((ICellContent) expr(pos+1)).getValue()).toString();
+	                String line = ((ICellContent) expr(pos+1)).getValue().toString();
 	                result = new CellSumUnary(spreadsheet, line);
 	                tokens.remove(pos+1);
 	            }
