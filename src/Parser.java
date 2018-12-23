@@ -67,7 +67,7 @@ public class Parser {
             tokens.get(pos+2);
             return false;
         }
-        catch(Exception e) {
+        catch(IndexOutOfBoundsException e) {
             return true;
         }
     }
@@ -78,21 +78,14 @@ public class Parser {
                 try {
                     tokens.get(pos+3);
                     return false;
-                } catch(Exception e1) {
+                } catch(IndexOutOfBoundsException e1) {
                     return true;
                 }
             }
             else
                 return isUnaryWithOneSum(pos);
-        } catch(Exception e2) {
+        } catch(IndexOutOfBoundsException e2) {
             return isUnaryWithOneSum(pos);
-//            try {
-//                Token test = tokens.get(pos+2);
-//                return false;
-//            }
-//            catch(Exception e2) {
-//                return true;
-//            }
         }
     }
     
