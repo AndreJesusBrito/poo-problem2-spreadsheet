@@ -4,8 +4,8 @@ public class CellSumBinary implements ICellContent {
     private boolean isDouble;
 
     public CellSumBinary(ICellContent arg1, ICellContent arg2) {
-        setArg1(arg1);
-        setArg2(arg2);
+        this.arg1 = arg1;
+        this.arg2 = arg2;
         setDouble();
     }
 

@@ -38,18 +38,17 @@ public class Parser {
     	    pos++;
         }
     }
-
+    
     private boolean isUnaryWithOneSum(int pos) {
         try {
             tokens.get(pos+2);
             return false;
-        }
-        catch(IndexOutOfBoundsException e) {
+        } catch(IndexOutOfBoundsException e) {
             return true;
         }
     }
     
-    private boolean isUnary(int pos) { //not working for every case, FIXME
+    private boolean isUnary(int pos) {
         try {
             if(tokens.get(pos-1).getType().equals("SUM")) {
                 try {
