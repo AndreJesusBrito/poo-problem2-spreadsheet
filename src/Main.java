@@ -9,7 +9,8 @@ public class Main {
             String in = scan.nextLine();
             interp.readInput(in);
         }
-        interp.run();
         scan.close();
+        interp.run();
+        System.out.println(interp.getOutput());
     }
 }
