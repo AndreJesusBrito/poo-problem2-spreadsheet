@@ -43,27 +43,39 @@ public class Parser {
         try {
             tokens.get(pos+2);
             return false;
-        }
-        catch(IndexOutOfBoundsException e) {
+        } catch(IndexOutOfBoundsException e) {
             return true;
         }
     }
     
-    private boolean isUnary(int pos) { //not working for every case, FIXME
+    private boolean isUnary(int pos) {
         try {
             if(tokens.get(pos-1).getType().equals("SUM")) {
                 try {
+                    if(tokens.get(pos+2).getType().equals("SUM")) {
+                        return true;
+                    }
                     tokens.get(pos+3);
                     return false;
                 } catch(IndexOutOfBoundsException e1) {
                     return true;
                 }
             }
-            else
+            else {
                 return isUnaryWithOneSum(pos);
+            }
         } catch(IndexOutOfBoundsException e2) {
             return isUnaryWithOneSum(pos);
         }
+    }
+    
+    private int increasePos(ICellContent arg, int pos) {
+        if(arg instanceof CellSumBinary)
+            return pos + 2;
+        else if(arg instanceof CellSumUnary)
+            return pos + 1;
+        else
+            return pos;
     }
     
 	public Object expr(int pos) {
@@ -85,26 +97,28 @@ public class Parser {
 	           tokens.get(pos+1).getType().equals("DOUBLE") ||
 	           tokens.get(pos+1).getType().equals("SUM")) {
 	            ICellContent arg1 = (ICellContent) expr(pos+1);
+	            pos = increasePos(arg1, pos);
 	            ICellContent arg2 = (ICellContent) expr(pos+2);
+	            pos = increasePos(arg2, pos);
                 result = new CellSumBinary(arg1, arg2);
-                tokens.remove(pos+1); tokens.remove(pos+1);
 	        }
 	        else if(tokens.get(pos+1).getType().equals("STRING")) {
 	            String line = (String) expr(pos+1);
+	            pos++;
 	            result = new CellSumUnary(spreadsheet, line);
-	            tokens.remove(pos+1);
 	        }
 	        else if(tokens.get(pos+1).getType().equals("INTEGER")) {
 	            if(!isUnary(pos)) {
 	                ICellContent arg1 = (ICellContent) expr(pos+1);
+	                pos = increasePos(arg1, pos);
 	                ICellContent arg2 = (ICellContent) expr(pos+2);
+	                pos = increasePos(arg2, pos);
 	                result = new CellSumBinary(arg1, arg2);
-	                tokens.remove(pos+1); tokens.remove(pos+1);
 	            }
 	            else {
 	                String line = ((ICellContent) expr(pos+1)).getValue().toString();
+	                pos++;
 	                result = new CellSumUnary(spreadsheet, line);
-	                tokens.remove(pos+1);
 	            }
 	        }
 	    }
