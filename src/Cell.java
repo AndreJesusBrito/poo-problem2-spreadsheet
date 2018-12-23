@@ -31,7 +31,7 @@ public class Cell {
     }
 
     public void incrementRef() {
-    	nReferences++;
+        nReferences++;
     }
 
     public void decrementRef() {
