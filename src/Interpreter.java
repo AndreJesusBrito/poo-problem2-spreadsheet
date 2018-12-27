@@ -20,7 +20,7 @@ public class Interpreter {
     }
 
     public String getOutput() {
-        return output;
+        return output.trim();
     }
 
     public void readInput(String cmd) {
@@ -62,14 +62,12 @@ public class Interpreter {
 
     private void printSsCmd() {
         String out = spreadsheet.toString();
-        output += out;
-        System.out.println(out);
+        output += out + "\n";
     }
 
     private void printCellCmd(String ref) {
         String out = spreadsheet.get(ref).toString();
-        output += out;
-        System.out.println(out);
+        output += out + "\n";
     }
 
     private void deleteCmd(String ref) {
