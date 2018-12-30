@@ -1,3 +1,4 @@
+
 public class CellPointer implements ICellContent {
     private Cell referencedCell = null;
 

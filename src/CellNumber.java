@@ -1,3 +1,4 @@
+
 public class CellNumber implements ICellContent {
     private double value;
     private boolean isDouble;

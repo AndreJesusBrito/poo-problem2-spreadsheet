@@ -1,3 +1,4 @@
+
 public class Token {
 	String type;
 	String value;

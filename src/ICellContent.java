@@ -1,3 +1,4 @@
+
 public interface ICellContent {
     public Object getValue();
     public String getContent();
