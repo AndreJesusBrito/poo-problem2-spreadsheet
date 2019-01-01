@@ -6,13 +6,16 @@ import java.util.Map;
 
 public class Parser {
 
+	// static methods and properties ------------------
+	private final static String PACKAGE_PATH = "UnitTest_Dep.";
+	
     private final static List<String> TOKENS = new ArrayList<String>();
     private final static Map<String, Class<?>> UNI_FUNC = new HashMap<String, Class<?>>();
     private final static Map<String, Class<?>> BIN_FUNC = new HashMap<String, Class<?>>();
     
     private final static void registerUniFunc(String funcName, String funcClass) {
     	try {
-			UNI_FUNC.put(funcName, Class.forName("UnitTest_Dep." + funcClass));
+			UNI_FUNC.put(funcName, Class.forName(PACKAGE_PATH + funcClass));
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 			System.exit(1);
@@ -20,7 +23,7 @@ public class Parser {
     }
     private final static void registerBinFunc(String funcName, String funcClass) {
     	try {
-			BIN_FUNC.put(funcName, Class.forName("UnitTest_Dep." + funcClass));
+			BIN_FUNC.put(funcName, Class.forName(PACKAGE_PATH + funcClass));
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 			System.exit(1);
@@ -36,19 +39,19 @@ public class Parser {
 		registerBinFunc("SUM", "CellSumBinary");
     }
     
-    private Object runUniFunc(String funcName, ICellContent arg1) {
-    	Class<?>[] type = { ICellContent.class };
-        Object[] obj = {arg1};
+    private static final Object newUniFunc(String funcName, ICellContent arg1, Spreadsheet ss) {
+    	Class<?>[] type = { Spreadsheet.class, ICellContent.class };
+        Object[] obj = { ss, arg1 };
 		try {
-			return Parser.UNI_FUNC.get("SUM").getConstructor(type).newInstance(obj);
-		}
-		catch (Exception e) {
+			return Parser.UNI_FUNC.get(funcName).getConstructor(type).newInstance(obj);
+		} catch (Exception e) {
 			e.printStackTrace();
 			System.exit(1);
 		}
-        return null;
-    }
-    private static Object newBinFunc(String funcName, ICellContent arg1, ICellContent arg2) {
+		return null;
+    }    
+    
+    private static final Object newBinFunc(String funcName, ICellContent arg1, ICellContent arg2) {
     	Class<?>[] type = { ICellContent.class, ICellContent.class };
         Object[] obj = {arg1, arg2};
 		try {
@@ -60,9 +63,12 @@ public class Parser {
 		return null;
     }    
     
+    // -------------------------------------------
+    
+    
+        
     Spreadsheet spreadsheet;
     List<Token> tokens;
-    
     
     public Parser(Spreadsheet spreadsheet, String[] strParts) throws UnsupportedTokenTypeException {
     	tokens = new ArrayList<Token>();
@@ -165,16 +171,18 @@ public class Parser {
             }
             else if(tokens.get(pos+1).getType().equals("STRING")) {
                 String line = (String) expr(pos+1);
+                ICellContent arg1 = new CellString(line);
                 pos++;
-                result = new CellSumUnary(spreadsheet, line);
-//                result = Parser.newBinFunc("SUM", arg1, arg2);
+                result = new CellSumUnary(spreadsheet, new CellString(line));
+                result = Parser.newUniFunc("SUM", arg1, spreadsheet);
             }
             else if(tokens.get(pos+1).getType().equals("INTEGER")) {
                 if(isUnary(pos)) {
                     String line = ((ICellContent) expr(pos+1)).getValue().toString();
+                    ICellContent arg1 = new CellString(line);
                     pos++;
-                    result = new CellSumUnary(spreadsheet, line);
-//                    result = Parser.newUniFunc("SUM", line);
+//                    result = new CellSumUnary(spreadsheet, new CellString(line));
+                    result = Parser.newUniFunc("SUM", arg1, spreadsheet);
                 }
                 else {
                     ICellContent arg1 = (ICellContent) expr(pos+1);
