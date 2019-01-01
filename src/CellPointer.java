@@ -25,10 +25,6 @@ public class CellPointer implements ICellContent {
         return referencedCell.getValue();
     }
 
-    public boolean isDouble() {
-        return referencedCell.getContent().isDouble();
-    }
-
     public void onDelete() {
         if(referencedCell != null) referencedCell.decrementRef();
     }

@@ -30,7 +30,7 @@ public class Spreadsheet extends TreeMap<String, Cell> {
     }
 
     public void initCell(String key) {
-    	setCell(key, new Cell(key, new CellNumber(0, false)));
+    	setCell(key, new Cell(key, new CellNumber<Integer>(0)));
     }
     
     @Override
@@ -52,7 +52,7 @@ public class Spreadsheet extends TreeMap<String, Cell> {
     public void delCell(String key) {
         Cell cell = get(key);
         if(cell.isReferenced()) {
-        	 get(key).setContent(new CellNumber(0.0, false));
+        	 get(key).setContent(new CellNumber<Integer>(0));
         } else {
         	cell.onDelete();
         	remove(key);

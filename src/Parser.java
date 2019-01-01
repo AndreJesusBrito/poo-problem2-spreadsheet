@@ -36,18 +36,18 @@ public class Parser {
 		registerBinFunc("SUM", "CellSumBinary");
     }
     
-//    private Object runUniFunc(String funcName, ICellContent arg1) {
-//    	Class<?>[] type = { ICellContent.class };
-//        Object[] obj = {arg1};
-//		try {
-//			return Parser.UNI_FUNC.get("SUM").getConstructor(type).newInstance(obj);
-//		}
-//		catch (Exception e) {
-//			e.printStackTrace();
-//			System.exit(1);
-//		}
-//        return null;
-//    }
+    private Object runUniFunc(String funcName, ICellContent arg1) {
+    	Class<?>[] type = { ICellContent.class };
+        Object[] obj = {arg1};
+		try {
+			return Parser.UNI_FUNC.get("SUM").getConstructor(type).newInstance(obj);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			System.exit(1);
+		}
+        return null;
+    }
     private static Object newBinFunc(String funcName, ICellContent arg1, ICellContent arg2) {
     	Class<?>[] type = { ICellContent.class, ICellContent.class };
         Object[] obj = {arg1, arg2};
@@ -82,7 +82,7 @@ public class Parser {
 
     private Token getMatchedToken(String str) throws UnsupportedTokenTypeException {
         if(str.charAt(0) == '=') {
-           return new Token("SUM", str);
+           return new Token(str.substring(1), str);
         }
         else {
         	if(str.matches("([A-Z]+)(\\d+)")) {
@@ -147,10 +147,10 @@ public class Parser {
             result = new String(tokens.get(pos).getValue());
         }
         else if(tokens.get(pos).getType().equals("INTEGER")) {
-            result = new CellNumber(Integer.parseInt(tokens.get(pos).getValue()), false);
+            result = new CellNumber<Integer>(Integer.parseInt(tokens.get(pos).getValue()));
         }
         else if(tokens.get(pos).getType().equals("DOUBLE")) {
-            result = new CellNumber(Double.parseDouble(tokens.get(pos).getValue()), true);
+            result = new CellNumber<Double>(Double.parseDouble(tokens.get(pos).getValue()));
         }
         else if(tokens.get(pos).getType().equals("SUM")) {
             if(tokens.get(pos+1).getType().equals("CELL_REFERENCE")
