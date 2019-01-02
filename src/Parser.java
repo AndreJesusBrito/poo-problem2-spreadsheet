@@ -171,15 +171,15 @@ public class Parser {
             }
             else if(tokens.get(pos+1).getType().equals("STRING")) {
                 String line = (String) expr(pos+1);
-                ICellContent arg1 = new CellString(line);
+                ICellContent arg1 = new CellColumnPointer(spreadsheet, line);
                 pos++;
-                result = new CellSumUnary(spreadsheet, new CellString(line));
+//                result = new CellSumUnary(spreadsheet, new CellRow(spreadsheet, line));
                 result = Parser.newUniFunc("SUM", arg1, spreadsheet);
             }
             else if(tokens.get(pos+1).getType().equals("INTEGER")) {
                 if(isUnary(pos)) {
                     String line = ((ICellContent) expr(pos+1)).getValue().toString();
-                    ICellContent arg1 = new CellString(line);
+                    ICellContent arg1 = new CellRowPointer(spreadsheet, line);
                     pos++;
 //                    result = new CellSumUnary(spreadsheet, new CellString(line));
                     result = Parser.newUniFunc("SUM", arg1, spreadsheet);

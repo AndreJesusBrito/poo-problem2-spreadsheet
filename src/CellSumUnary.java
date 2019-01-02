@@ -10,29 +10,32 @@ public class CellSumUnary extends CellUnaryFunction {
         setArg1(line);
     }
 
-	@Override
-    public Object getValue() {
-        Double value = 0.0;
-        Set<String> keySet;
-        if(((String) arg1.getValue()).matches("\\d+"))
-            keySet = spreadsheet.getRow((String) arg1.getValue());
-        else
-            keySet = spreadsheet.getCol((String) arg1.getValue());
-
-        boolean isDouble = false;
-        for(String key : keySet) {
-        	Number num = (Number) spreadsheet.get(key).getValue();
-        	if(num instanceof Integer) {
-        		value += (Integer) num;
-        	} else {
-        		value += (Double) num;
-        		isDouble = true;
-        	}
-        }
-        return isDouble ? value : value.intValue();
+    @Override
+    public void setArg1(ICellContent content) {
+    	if(content instanceof CellCollection)
+    		arg1 = content;
+//    	else
+//    		throw new Exception();
     }
 
-	public Spreadsheet getSpreadsheet() {
+    @Override
+    public Object getValue() {
+	  Double result = 0.0;
+	
+	  boolean isDouble = false;
+	  for(ICellContent cellContent : (CellCollection) arg1) {
+	  	Number num = (Number) cellContent.getValue();
+	  	if(num instanceof Integer) {
+	  		result += num.intValue();
+	  	} else {
+	  		result += num.doubleValue();
+	  		isDouble = true;
+	  	}
+	  }
+      return isDouble ? result : result.intValue();
+	}
+	
+    public Spreadsheet getSpreadsheet() {
         return spreadsheet;
     }
 
