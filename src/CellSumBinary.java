@@ -14,4 +14,9 @@ public final class CellSumBinary extends CellBinaryFunction {
     		return a.intValue() + b.intValue();
     	}
     }
+
+	@Override
+	public String getFuncName() {
+		return "SUM";
+	}
 }

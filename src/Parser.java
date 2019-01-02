@@ -13,17 +13,9 @@ public class Parser {
     private final static Map<String, Class<?>> UNI_FUNC = new HashMap<String, Class<?>>();
     private final static Map<String, Class<?>> BIN_FUNC = new HashMap<String, Class<?>>();
     
-    private final static void registerUniFunc(String funcName, String funcClass) {
+    private final static void registerFunc(Map<String, Class<?>> register ,String funcName, String funcClass) {
     	try {
-			UNI_FUNC.put(funcName, Class.forName(PACKAGE_PATH + funcClass));
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-			System.exit(1);
-		}
-    }
-    private final static void registerBinFunc(String funcName, String funcClass) {
-    	try {
-			BIN_FUNC.put(funcName, Class.forName(PACKAGE_PATH + funcClass));
+			register.put(funcName, Class.forName(PACKAGE_PATH + funcClass));
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 			System.exit(1);
@@ -32,11 +24,10 @@ public class Parser {
     
     static {
     	TOKENS.add("ool");
-    	   	
     	
-		registerUniFunc("SUM", "CellSumUnary");
+		registerFunc(UNI_FUNC, "SUM", "CellSumUnary");
 		
-		registerBinFunc("SUM", "CellSumBinary");
+		registerFunc(BIN_FUNC, "SUM", "CellSumBinary");
     }
     
     private static final Object newUniFunc(String funcName, ICellContent arg1, Spreadsheet ss) {

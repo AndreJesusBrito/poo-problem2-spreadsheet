@@ -7,7 +7,7 @@ public abstract class CellBinaryFunction extends CellFunction {
         return arg1;
     }
 
-    public void setArg1(ICellContent arg1) {
+    public void setArg1(ICellContent arg1) throws CellFunctionInvalidArgException {
         this.arg1 = arg1;
     }
 
@@ -15,7 +15,7 @@ public abstract class CellBinaryFunction extends CellFunction {
         return arg2;
     }
 
-    public void setArg2(ICellContent arg2) {
+    public void setArg2(ICellContent arg2) throws CellFunctionInvalidArgException {
         this.arg2 = arg2;
     }
 

@@ -1,6 +1,8 @@
 
-public abstract class CellFunction implements ICellContent {
+public abstract class CellFunction implements ICellFunction {
 	public String getContent() {
-		return "=SUM ";
+		return "=" + this.getFuncName() + " ";
 	}
+	
+	public void onDelete() {}
 }

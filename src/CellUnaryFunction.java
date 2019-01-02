@@ -6,7 +6,7 @@ public abstract class CellUnaryFunction extends CellFunction {
     public ICellContent getArg1() {
         return arg1;
     }
-	public void setArg1(ICellContent arg) {
+	public void setArg1(ICellContent arg) throws CellFunctionInvalidArgException {
         this.arg1 = arg;
     }
 	
