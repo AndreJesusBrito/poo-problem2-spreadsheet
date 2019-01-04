@@ -9,7 +9,8 @@ public class Parser {
 	// static methods and properties ------------------
 	private final static String PACKAGE_PATH = "UnitTest_Dep.";
 	
-    private final static List<String> TOKENS = new ArrayList<String>();
+	private final static List<IToken> GENERAL_CONTEXT_LEXICAL = new ArrayList<IToken>();
+	
     private final static Map<String, Class<?>> UNI_FUNC = new HashMap<String, Class<?>>();
     private final static Map<String, Class<?>> BIN_FUNC = new HashMap<String, Class<?>>();
     
@@ -23,7 +24,8 @@ public class Parser {
     }
     
     static {
-    	TOKENS.add("ool");
+    	GENERAL_CONTEXT_LEXICAL.add(new NumberToken());
+    	GENERAL_CONTEXT_LEXICAL.add(new PointerToken());
     	
 		registerFunc(UNI_FUNC, "SUM", "CellSumUnary");
 		
@@ -35,7 +37,7 @@ public class Parser {
         Object[] obj = { ss, arg1 };
 		try {
 			return Parser.UNI_FUNC.get(funcName).getConstructor(type).newInstance(obj);
-		} catch (Exception e) {
+		} catch(Exception e) {
 			e.printStackTrace();
 			System.exit(1);
 		}
@@ -53,7 +55,7 @@ public class Parser {
 		}
 		return null;
     }    
-    
+        
     // -------------------------------------------
     
     
@@ -82,16 +84,16 @@ public class Parser {
            return new Token(str.substring(1), str);
         }
         else {
-        	if(str.matches("([A-Z]+)(\\d+)")) {
+        	if(str.matches("^([A-Z]+)(\\d+)$")) {
 	           return new Token("CELL_REFERENCE", str);
 	        }
-	        else if(str.matches("[A-Z]+")) {
+	        else if(str.matches("^[A-Z]+$")) {
 	           return new Token("STRING", str);
 	        }
-	        else if(str.matches("\\d+")) {
+	        else if(str.matches("^\\d+$")) {
 	           return new Token("INTEGER", str);
 	        }
-	        else if(str.matches("\\d+[.]\\d*")) {
+	        else if(str.matches("^\\d+[.]\\d*$")) {
 	           return new Token("DOUBLE", str);
 	        }
 	        else
@@ -135,56 +137,55 @@ public class Parser {
             return pos;
     }
 
-    public Object expr(int pos) {
-        Object result = null;
-        if(tokens.get(pos).getType().equals("CELL_REFERENCE")) {
-            result = new CellPointer(spreadsheet.get(tokens.get(pos).getValue()));
-        }
-        else if(tokens.get(pos).getType().equals("STRING")) {
-            result = new String(tokens.get(pos).getValue());
-        }
-        else if(tokens.get(pos).getType().equals("INTEGER")) {
-            result = new CellNumber<Integer>(Integer.parseInt(tokens.get(pos).getValue()));
-        }
-        else if(tokens.get(pos).getType().equals("DOUBLE")) {
-            result = new CellNumber<Double>(Double.parseDouble(tokens.get(pos).getValue()));
-        }
-        else if(tokens.get(pos).getType().equals("SUM")) {
+    public ICellContent startParsing() {
+    	return (ICellContent) expr(0, GENERAL_CONTEXT_LEXICAL);
+    }
+    
+    public Object expr(int pos, List<IToken> contextLexical) {
+    	if(tokens.get(pos).getValue().charAt(0) != '=') { // checks if the token is not a func
+    		String input = tokens.get(pos).getValue();
+
+        	for(IToken token : contextLexical) {
+        		if(input.matches(token.getParsePattern())) {
+                	return token.createToken(input, spreadsheet);
+                }
+        	}
+        	
+            if(tokens.get(pos).getType().equals("STRING")) {
+                return new String(tokens.get(pos).getValue());
+            }
+    	} else {
             if(tokens.get(pos+1).getType().equals("CELL_REFERENCE")
             || tokens.get(pos+1).getType().equals("DOUBLE")
             || tokens.get(pos+1).getType().equals("SUM")) {
-                ICellContent arg1 = (ICellContent) expr(pos+1);
+                ICellContent arg1 = (ICellContent) expr(pos+1, contextLexical);
                 pos = increasePos(arg1, pos);
-                ICellContent arg2 = (ICellContent) expr(pos+2);
+                ICellContent arg2 = (ICellContent) expr(pos+2, contextLexical);
                 pos = increasePos(arg2, pos);
-//                result = new CellSumBinary(arg1, arg2);
-                result = Parser.newBinFunc("SUM", arg1, arg2);
+                return Parser.newBinFunc("SUM", arg1, arg2);
             }
-            else if(tokens.get(pos+1).getType().equals("STRING")) {
-                String line = (String) expr(pos+1);
+            if(tokens.get(pos+1).getType().equals("STRING")) {
+                String line = (String) expr(pos+1, contextLexical);
                 ICellContent arg1 = new CellColumnPointer(spreadsheet, line);
                 pos++;
-//                result = new CellSumUnary(spreadsheet, new CellRow(spreadsheet, line));
-                result = Parser.newUniFunc("SUM", arg1, spreadsheet);
+                return Parser.newUniFunc("SUM", arg1, spreadsheet);
             }
-            else if(tokens.get(pos+1).getType().equals("INTEGER")) {
+            if(tokens.get(pos+1).getType().equals("INTEGER")) {
                 if(isUnary(pos)) {
-                    String line = ((ICellContent) expr(pos+1)).getValue().toString();
+                    String line = ((ICellContent) expr(pos+1, contextLexical)).getValue().toString();
                     ICellContent arg1 = new CellRowPointer(spreadsheet, line);
                     pos++;
-//                    result = new CellSumUnary(spreadsheet, new CellString(line));
-                    result = Parser.newUniFunc("SUM", arg1, spreadsheet);
+                    return Parser.newUniFunc("SUM", arg1, spreadsheet);
                 }
                 else {
-                    ICellContent arg1 = (ICellContent) expr(pos+1);
+                    ICellContent arg1 = (ICellContent) expr(pos+1, contextLexical);
                     pos = increasePos(arg1, pos);
-                    ICellContent arg2 = (ICellContent) expr(pos+2);
+                    ICellContent arg2 = (ICellContent) expr(pos+2, contextLexical);
                     pos = increasePos(arg2, pos);
-//                    result = new CellSumBinary(arg1, arg2);
-                    result = Parser.newBinFunc("SUM", arg1, arg2);
+                    return Parser.newBinFunc("SUM", arg1, arg2);
                 }
             }
-        }
-        return result;
+    	}
+		return null;
     }
 }

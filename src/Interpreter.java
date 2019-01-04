@@ -47,7 +47,7 @@ public class Interpreter {
                 try {
                     String[] test = Arrays.copyOfRange(cmdParts, 1, cmdParts.length);
                     Parser parser = new Parser(spreadsheet, test);
-                    Cell c = new Cell(cmdParts[0], (ICellContent) parser.expr(0));
+                    Cell c = new Cell(cmdParts[0], parser.startParsing());
                     spreadsheet.setCell(cmdParts[0], c);
                 } catch(UnsupportedTokenTypeException e) {
                     e.printStackTrace();
