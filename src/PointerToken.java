@@ -3,8 +3,8 @@
 public class PointerToken implements IToken {
 
 	@Override
-	public ICellContent createToken(String pattern, Spreadsheet spreadsheet) {
-		return new CellPointer(spreadsheet.get(pattern));
+	public ICellContent createToken(int pos, Parser parser) {
+		return new CellPointer(parser.getSpreadsheet().get(parser.getTokenAtPos(pos)));
 	}
 
 	@Override

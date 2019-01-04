@@ -1,134 +1,47 @@
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class Parser {
 
-	// static methods and properties ------------------
-	private final static String PACKAGE_PATH = "UnitTest_Dep.";
-	
 	private final static List<IToken> GENERAL_CONTEXT_LEXICAL = new ArrayList<IToken>();
-	
-    private final static Map<String, Class<?>> UNI_FUNC = new HashMap<String, Class<?>>();
-    private final static Map<String, Class<?>> BIN_FUNC = new HashMap<String, Class<?>>();
-    
-    private final static void registerFunc(Map<String, Class<?>> register ,String funcName, String funcClass) {
-    	try {
-			register.put(funcName, Class.forName(PACKAGE_PATH + funcClass));
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-			System.exit(1);
-		}
-    }
-    
+	private final static List<IToken> GENERAL_CONTEXT_FUNC_LEXICAL = new ArrayList<IToken>();
+	    
     static {
     	GENERAL_CONTEXT_LEXICAL.add(new NumberToken());
     	GENERAL_CONTEXT_LEXICAL.add(new PointerToken());
     	
-		registerFunc(UNI_FUNC, "SUM", "CellSumUnary");
-		
-		registerFunc(BIN_FUNC, "SUM", "CellSumBinary");
+    	GENERAL_CONTEXT_FUNC_LEXICAL.add(new SumFuncToken());
     }
+
     
-    private static final Object newUniFunc(String funcName, ICellContent arg1, Spreadsheet ss) {
-    	Class<?>[] type = { Spreadsheet.class, ICellContent.class };
-        Object[] obj = { ss, arg1 };
-		try {
-			return Parser.UNI_FUNC.get(funcName).getConstructor(type).newInstance(obj);
-		} catch(Exception e) {
-			e.printStackTrace();
-			System.exit(1);
-		}
-		return null;
-    }    
-    
-    private static final Object newBinFunc(String funcName, ICellContent arg1, ICellContent arg2) {
-    	Class<?>[] type = { ICellContent.class, ICellContent.class };
-        Object[] obj = {arg1, arg2};
-		try {
-			return Parser.BIN_FUNC.get(funcName).getConstructor(type).newInstance(obj);
-		} catch (Exception e) {
-			e.printStackTrace();
-			System.exit(1);
-		}
-		return null;
-    }    
-        
-    // -------------------------------------------
-    
-    
-        
-    Spreadsheet spreadsheet;
-    List<Token> tokens;
-    
+
+    private Spreadsheet spreadsheet;
+    private List<String> tokens;
+       
     public Parser(Spreadsheet spreadsheet, String[] strParts) throws UnsupportedTokenTypeException {
-    	tokens = new ArrayList<Token>();
-    	parseTokens(strParts);
+    	tokens = new ArrayList<String>();
+    	for(String token : strParts) {
+    		tokens.add(token);
+    	}
         this.spreadsheet = spreadsheet;
     }
 
     public Parser(Spreadsheet spreadsheet, String strLine) throws UnsupportedTokenTypeException {
         this(spreadsheet, strLine.split("\\s+"));
     }
-
-    public void parseTokens(String[] strParts) throws UnsupportedTokenTypeException {
-        for(int pos = 0; pos < strParts.length; pos++) {
-            tokens.add(getMatchedToken(strParts[pos]));
-        }
+    
+    public Spreadsheet getSpreadsheet() {
+		return spreadsheet;
     }
-
-    private Token getMatchedToken(String str) throws UnsupportedTokenTypeException {
-        if(str.charAt(0) == '=') {
-           return new Token(str.substring(1), str);
-        }
-        else {
-        	if(str.matches("^([A-Z]+)(\\d+)$")) {
-	           return new Token("CELL_REFERENCE", str);
-	        }
-	        else if(str.matches("^[A-Z]+$")) {
-	           return new Token("STRING", str);
-	        }
-	        else if(str.matches("^\\d+$")) {
-	           return new Token("INTEGER", str);
-	        }
-	        else if(str.matches("^\\d+[.]\\d*$")) {
-	           return new Token("DOUBLE", str);
-	        }
-	        else
-	           throw new UnsupportedTokenTypeException();
-    	}
+    public String getTokenAtPos(int pos) {
+    	return tokens.get(pos);
     }
-
-    private boolean isUnaryWithOneSum(int pos) {
-        if(pos+2 >= tokens.size()) return true;
-        tokens.get(pos+2);
-        return false;
+    public List<String> getTokens() {
+    	return tokens;
     }
-
-    private boolean isUnary(int pos) {
-        try {
-            if(tokens.get(pos-1).getType().equals("SUM")) {
-                try {
-                    if(tokens.get(pos+2).getType().equals("SUM")) {
-                        return true;
-                    }
-                    tokens.get(pos+3);
-                    return false;
-                } catch(IndexOutOfBoundsException e1) {
-                    return true;
-                }
-            }
-            else {
-                return isUnaryWithOneSum(pos);
-            }
-        } catch(IndexOutOfBoundsException e2) {
-            return isUnaryWithOneSum(pos);
-        }
-    }
-
-    private int increasePos(ICellContent arg, int pos) {
+    
+    public int increasePos(ICellContent arg, int pos) {
         if(arg instanceof CellBinaryFunction)
             return pos + 2;
         else if(arg instanceof CellUnaryFunction)
@@ -137,55 +50,28 @@ public class Parser {
             return pos;
     }
 
-    public ICellContent startParsing() {
-    	return (ICellContent) expr(0, GENERAL_CONTEXT_LEXICAL);
+    private boolean isFunc(String pattern) {
+    	return pattern.charAt(0) == '=';
     }
     
-    public Object expr(int pos, List<IToken> contextLexical) {
-    	if(tokens.get(pos).getValue().charAt(0) != '=') { // checks if the token is not a func
-    		String input = tokens.get(pos).getValue();
-
-        	for(IToken token : contextLexical) {
-        		if(input.matches(token.getParsePattern())) {
-                	return token.createToken(input, spreadsheet);
-                }
-        	}
-        	
-            if(tokens.get(pos).getType().equals("STRING")) {
-                return new String(tokens.get(pos).getValue());
-            }
-    	} else {
-            if(tokens.get(pos+1).getType().equals("CELL_REFERENCE")
-            || tokens.get(pos+1).getType().equals("DOUBLE")
-            || tokens.get(pos+1).getType().equals("SUM")) {
-                ICellContent arg1 = (ICellContent) expr(pos+1, contextLexical);
-                pos = increasePos(arg1, pos);
-                ICellContent arg2 = (ICellContent) expr(pos+2, contextLexical);
-                pos = increasePos(arg2, pos);
-                return Parser.newBinFunc("SUM", arg1, arg2);
-            }
-            if(tokens.get(pos+1).getType().equals("STRING")) {
-                String line = (String) expr(pos+1, contextLexical);
-                ICellContent arg1 = new CellColumnPointer(spreadsheet, line);
-                pos++;
-                return Parser.newUniFunc("SUM", arg1, spreadsheet);
-            }
-            if(tokens.get(pos+1).getType().equals("INTEGER")) {
-                if(isUnary(pos)) {
-                    String line = ((ICellContent) expr(pos+1, contextLexical)).getValue().toString();
-                    ICellContent arg1 = new CellRowPointer(spreadsheet, line);
-                    pos++;
-                    return Parser.newUniFunc("SUM", arg1, spreadsheet);
-                }
-                else {
-                    ICellContent arg1 = (ICellContent) expr(pos+1, contextLexical);
-                    pos = increasePos(arg1, pos);
-                    ICellContent arg2 = (ICellContent) expr(pos+2, contextLexical);
-                    pos = increasePos(arg2, pos);
-                    return Parser.newBinFunc("SUM", arg1, arg2);
-                }
+    public ICellContent startParsing() {
+    	try {
+			return (ICellContent) expr(0, GENERAL_CONTEXT_LEXICAL);
+		} catch (UnsupportedTokenTypeException e) {
+			System.err.println("Error in parsing!");
+			e.printStackTrace();
+			System.exit(1);
+			return null;
+		}
+    }
+    public ICellContent expr(int pos, List<IToken> contextLexical) throws UnsupportedTokenTypeException {
+    	String input = tokens.get(pos);
+    	List<IToken> lexical = isFunc(input) ? GENERAL_CONTEXT_FUNC_LEXICAL : contextLexical;
+		for(IToken token : lexical) {
+    		if(input.matches(token.getParsePattern())) {
+    			return token.createToken(pos, this);
             }
     	}
-		return null;
+    	throw new UnsupportedTokenTypeException();
     }
 }

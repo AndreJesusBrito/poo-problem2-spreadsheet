@@ -1,7 +1,7 @@
 
 
 public class CellSumUnary extends CellUnaryFunction {
-    public CellSumUnary(Spreadsheet spreadsheet, ICellContent line) throws CellFunctionInvalidArgException {
+    public CellSumUnary(ICellContent line) throws CellFunctionInvalidArgException {
         setArg1(line);
     }
 

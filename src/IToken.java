@@ -1,6 +1,6 @@
 
 
 public interface IToken {
-	public ICellContent createToken(String pattern, Spreadsheet spreadsheet);
+	public ICellContent createToken(int pos, Parser parser) throws UnsupportedTokenTypeException;
 	public String getParsePattern();
 }
