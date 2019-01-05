@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 package Unit_Tests__DELETE_ME_PLEASE;
+=======
+package tests;
+>>>>>>> alt
 import static org.junit.Assert.*;
 
 import org.junit.Test;

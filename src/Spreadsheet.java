@@ -1,66 +1,66 @@
+
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.HashSet;
+import java.util.SortedMap;
 
-public class Spreadsheet extends TreeMap<String, Cell> {
-    private static final long serialVersionUID = 6622418703791895248L;
-    private static Comparator<String> comparator = new Comparator<String>() {
-        @Override
-        public int compare(String key1, String key2) {
-            String pattern = "([A-Z]+)(\\d+)";
-            String key1Col = key1.replaceAll(pattern, "$1");
-            String key1Row = key1.replaceAll(pattern, "$2");
-            String key2Col = key2.replaceAll(pattern, "$1");
-            String key2Row = key2.replaceAll(pattern, "$2");
-            return key1Row.equals(key2Row)
-                    ? key1Col.length() == key2Col.length()
-                        ? key1Col.compareTo(key2Col)
-                        : key1Col.length() - key2Col.length()
-                    : key1Row.length() == key2Row.length()
-                        ? key1Row.compareTo(key2Row)
-                        : key1Row.length() - key2Row.length();
-        }
-    };
+public class Spreadsheet {
+    private SortedMap<String, Cell> spreadsheet;
 
     public Spreadsheet() {
-        super(comparator);
+        spreadsheet = new TreeMap<String, Cell>(new Comparator<String>() {
+            @Override
+            public int compare(String key1, String key2) {
+                String pattern = "([A-Z]+)(\\d+)";
+                String key1Col = key1.replaceAll(pattern, "$1");
+                String key1Row = key1.replaceAll(pattern, "$2");
+                String key2Col = key2.replaceAll(pattern, "$1");
+                String key2Row = key2.replaceAll(pattern, "$2");
+                return key1Row.equals(key2Row)
+                        ? key1Col.length() == key2Col.length()
+                            ? key1Col.compareTo(key2Col)
+                            : key1Col.length() - key2Col.length()
+                        : key1Row.length() == key2Row.length()
+                            ? key1Row.compareTo(key2Row)
+                            : key1Row.length() - key2Row.length();
+            }
+        });
     }
 
     public void initCell(String key) {
-    	setCell(key, new Cell(key, new CellNumber(0, false)));
+    	setCell(key, new Cell(key, new CellNumber<Integer>(0)));
     }
     
-    @Override
     public Cell get(Object key) {
-		if(!this.containsKey(key)) {
+		if(!spreadsheet.containsKey(key)) {
 			initCell((String) key);
 		}
-		return super.get(key);
+		return spreadsheet.get(key);
     }
     
     public void setCell(String key, Cell c) {
-        if(containsKey(key)) {
+        if(spreadsheet.containsKey(key)) {
         	get(key).setContent(c.getContent());
         } else {
-            put(key, c);
+            spreadsheet.put(key, c);
         }
     }
 
     public void delCell(String key) {
         Cell cell = get(key);
         if(cell.isReferenced()) {
-        	 get(key).setContent(new CellNumber(0.0, false));
+        	 get(key).setContent(new CellNumber<Integer>(0));
         } else {
         	cell.onDelete();
-        	remove(key);
+        	spreadsheet.remove(key);
         }
     }
 
     public Set<String> getRow(String rowKey) {
         Set<String> row = new HashSet<String>();
-        Iterator<String> iter = keySet().iterator();
+        Iterator<String> iter = spreadsheet.keySet().iterator();
         String pattern = "[A-Z]+" + rowKey;
         while(iter.hasNext()) {
             String key = iter.next();
@@ -72,7 +72,7 @@ public class Spreadsheet extends TreeMap<String, Cell> {
 
     public Set<String> getCol(String colKey) {
         Set<String> col = new HashSet<String>();
-        Iterator<String> iter = keySet().iterator();
+        Iterator<String> iter = spreadsheet.keySet().iterator();
         String pattern = colKey + "\\d+";
         while(iter.hasNext()) {
             String key = iter.next();
@@ -105,7 +105,7 @@ public class Spreadsheet extends TreeMap<String, Cell> {
     }
 
     public String toString() {
-        Iterator<String> iter = keySet().iterator();
+        Iterator<String> iter = spreadsheet.keySet().iterator();
         String pattern = "([A-Z]+)(\\d+)";
         String result = "";
         String lastRowKey = "";
@@ -127,5 +127,13 @@ public class Spreadsheet extends TreeMap<String, Cell> {
             }
         }
         return result.trim();
+    }
+
+    public void clear() {
+        spreadsheet.clear();
+    }
+
+    public boolean containsKey(String ref) {
+        return spreadsheet.containsKey(ref);
     }
 }

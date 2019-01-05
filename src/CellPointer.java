@@ -1,3 +1,4 @@
+
 public class CellPointer implements ICellContent {
     private Cell referencedCell = null;
 
@@ -22,10 +23,6 @@ public class CellPointer implements ICellContent {
     @Override
     public Object getValue() {
         return referencedCell.getValue();
-    }
-
-    public boolean isDouble() {
-        return referencedCell.getContent().isDouble();
     }
 
     public void onDelete() {
