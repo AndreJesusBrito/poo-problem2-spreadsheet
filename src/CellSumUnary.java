@@ -15,19 +15,23 @@ public class CellSumUnary extends CellUnaryFunction {
 
     @Override
     public Object getValue() {
-	    Double result = 0.0;
+	    Double counter = 0.0;
 	
 	    boolean isDouble = false;
 	    for(ICellContent cellContent : (CellCollection) arg1) {
 	    	Number num = (Number) cellContent.getValue();
 	    	if(num instanceof Integer) {
-	    		result += num.intValue();
+	    		counter += num.intValue();
 	    	} else {
-	    		result += num.doubleValue();
+	    		counter += num.doubleValue();
 	    		isDouble = true;
 	    	}
 	    }
-	    return isDouble ? result : result.intValue();
+	    if(isDouble) {
+	    	return counter;
+	    } else {
+	    	return counter.intValue();
+	    }
 	}
     
 	@Override
