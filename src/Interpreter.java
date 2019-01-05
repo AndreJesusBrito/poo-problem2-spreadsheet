@@ -67,8 +67,11 @@ public class Interpreter {
     }
 
     private void printCellCmd(String ref) {
+        boolean checkExist = spreadsheet.containsKey(ref);
         String out = spreadsheet.get(ref).toString();
         output += out + "\n";
+        if(!checkExist)
+            spreadsheet.delCell(ref);
     }
 
     private void deleteCmd(String ref) {
