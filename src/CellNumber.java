@@ -4,19 +4,19 @@ public class CellNumber<T extends Number> implements ICellContent {
     public CellNumber(T value) {
         setValue(value);
     }
-    
+
     @Override
     public T getValue() {
-    	return value;
+        return value;
     }
 
     private void setValue(T value) {
         this.value = value;
     }
 
-	@Override
-    public String getContent() {
-    	return getValue().toString();
+    @Override
+    public String getContentString() {
+        return getValue().toString();
     }
 
     @Override

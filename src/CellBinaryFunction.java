@@ -1,8 +1,8 @@
 
 public abstract class CellBinaryFunction extends CellFunction {
-	protected ICellContent arg1;
+    protected ICellContent arg1;
     protected ICellContent arg2;
-    
+
     public ICellContent getArg1() {
         return arg1;
     }
@@ -20,10 +20,10 @@ public abstract class CellBinaryFunction extends CellFunction {
     }
 
     @Override
-    public String getContent() {
-        String result = super.getContent();
-        result += arg1.getContent() + " ";
-        result += arg2.getContent();
+    public String getContentString() {
+        String result = super.getContentString();
+        result += arg1.getContentString() + " ";
+        result += arg2.getContentString();
         return result;
     }
 

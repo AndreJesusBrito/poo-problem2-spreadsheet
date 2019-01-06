@@ -1,5 +1,7 @@
 
-
 public interface ICellFunction extends ICellContent {
-	public String getFuncName();
+     /** Returns the name of the function
+      * @return name of function as String
+      */
+     public String getFuncName();
 }

@@ -20,19 +20,29 @@ public class Interpreter {
         this.spreadsheet = spreadsheet;
     }
 
+    /**Returns the output of the executed commands
+     * @return the output of the interpreted input as a String
+     */
     public String getOutput() {
         return output.trim();
     }
 
+    /**Adds a command to the commands Queue
+     * @param cmd String to be added to the commands Queue
+     */
     public void readInput(String cmd) {
     	commands.add(cmd);
     }
 
+    /**Executes the commands Queue*/
     public void run() {
         for(String cmd : commands)
             exeCmd(cmd);
     }
 
+    /**Executes one command
+     * @param in command to be executed
+     */
     private void exeCmd(String in) {
         String[] cmdParts = in.split("\\s+");
 
@@ -60,23 +70,26 @@ public class Interpreter {
     // commands
     //---------------------------------------------
 
-
+    /**Adds the spreadsheet toString to the output*/
     private void printSsCmd() {
         String out = spreadsheet.toString();
         output += out + "\n";
     }
 
+    /**Adds the Cell toString to the output
+     * @param ref key of the Cell
+     */
     private void printCellCmd(String ref) {
         boolean checkExist = spreadsheet.containsKey(ref);
-        String out = spreadsheet.get(ref).toString();
+        String out = spreadsheet.getCell(ref).toString();
         output += out + "\n";
-<<<<<<< HEAD
-=======
         if(!checkExist)
             spreadsheet.delCell(ref);
->>>>>>> alt
     }
 
+    /**Deletes a row, column, cell, or the entire spreadsheet
+     * @param ref String that indicates either a row, column, cell or is empty
+     */
     private void deleteCmd(String ref) {
         if(ref.matches("([A-Z]+)(\\d+)")) {
             spreadsheet.delCell(ref);

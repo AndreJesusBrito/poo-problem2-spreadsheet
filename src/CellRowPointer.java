@@ -14,13 +14,13 @@ public class CellRowPointer extends CellCollection {
 		this.rowID = rowID;
 	}
 	
-	public Object getValue() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	@Override
+    public Set<String> getValue() {
+        return spreadsheet.getRow(rowID);
+    }
 
 	@Override
-	public String getContent() {
+	public String getContentString() {
 		return rowID;
 	}
 
@@ -28,9 +28,9 @@ public class CellRowPointer extends CellCollection {
 	@Override
 	public Iterator<ICellContent> iterator() {
 		List<ICellContent> contents = new ArrayList<ICellContent>();
-		Set<String> keySet = spreadsheet.getRow(getContent());
+		Set<String> keySet = getValue();
 		for(String key : keySet) {
-			contents.add(spreadsheet.get(key).getContent());
+			contents.add(spreadsheet.getCell(key).getContent());
 		}
 		return contents.iterator();
 	}

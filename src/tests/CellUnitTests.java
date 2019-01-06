@@ -10,21 +10,21 @@ public class CellUnitTests {
   public void testGetContent1() {
     CellNumber cn = new CellNumber(2);
     Cell cell = new Cell(cn);
-    assertEquals(cell.getContent(), "2");
+    assertEquals(cell.getContentString(), "2");
   }
 
   @Test
   public void testGetContent2() {
     CellPointer cp = new CellPointer("A2");
     Cell cell = new Cell(cp);
-    assertEquals(cell.getContent(), "A2");
+    assertEquals(cell.getContentString(), "A2");
   }
 
   @Test
   public void testGetContent3() {
     CellFormula cf = new CellFormula("=SUM 1 1");
     Cell cell = new Cell(cf);
-    assertEquals(cell.getContent(), "=SUM 1 1");
+    assertEquals(cell.getContentString(), "=SUM 1 1");
   }
 
 

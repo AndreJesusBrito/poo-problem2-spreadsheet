@@ -12,11 +12,11 @@ public class CellPointer implements ICellContent {
     }
 
     public void setReferencedCell(Cell referencedCell) {
-    	this.referencedCell = referencedCell;
+        this.referencedCell = referencedCell;
     }
 
     @Override
-    public String getContent() {
+    public String getContentString() {
         return referencedCell.getKey();
     }
 

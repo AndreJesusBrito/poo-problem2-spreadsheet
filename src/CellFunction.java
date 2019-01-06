@@ -1,8 +1,8 @@
 
 public abstract class CellFunction implements ICellFunction {
-	public String getContent() {
-		return "=" + this.getFuncName() + " ";
-	}
-	
-	public void onDelete() {}
+    public String getContentString() {
+        return "=" + this.getFuncName() + " ";
+    }
+
+    public void onDelete() {}
 }
